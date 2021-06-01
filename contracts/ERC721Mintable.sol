@@ -29,6 +29,10 @@ contract Ownable {
         _owner = newOwner;
         emit OwnershipTransferred(msg.sender);
     }
+
+    function getContractOwner() public returns (address) {
+        return _owner;
+    }
 }
 
 //  TODO's: Create a Pausable contract that inherits from the Ownable contract
@@ -234,7 +238,7 @@ contract ERC721 is ERC165 {
     function _mint(address to, uint256 tokenId) internal {
 
         // TODO revert if given tokenId already exists or given address is invalid
-        require(_exists(tokenId) || to != address(0), "Token already exists or sender address is invalid");
+        require(!_exists(tokenId) && to != address(0), "Token already exists or sender address is invalid");
         // TODO mint tokenId to given address & increase token count of owner
         _tokenOwner[tokenId] = to;
         _ownedTokensCount[to].increment();
@@ -461,7 +465,7 @@ contract ERC721Enumerable is ERC721 {
 }
 
 contract ERC721Metadata is ERC721Enumerable, usingOraclize {
-    
+
     // TODO: Create private vars for token _name, _symbol, and _baseTokenURI (string)
     string _name;
     string _symbol;
@@ -529,7 +533,7 @@ contract ERC721Metadata is ERC721Enumerable, usingOraclize {
 contract ERC721Mintable is ERC721Metadata("RealEstateContract", "RES", "https://s3-us-west-2.amazonaws.com/udacity-blockchain/capstone/") {
 
 function mint(address to, uint256 tokenId) public onlyOwner returns (bool) {
-    _mint(to, tokenId);
+    super._mint(to, tokenId);
     setTokenURI(tokenId);
     return true;
     }
