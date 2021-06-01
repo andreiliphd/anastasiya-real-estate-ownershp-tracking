@@ -23,14 +23,12 @@ contract('TestERC721Mintable', accounts => {
 
         it('should return total supply', async function () {
             let total = await this.contract.totalSupply({from: account_one});
-            assert.equal(total, 3, "Total supply is not matched with expected value");
+            assert.equal(total, 1, "Total supply is not matched with expected value");
         })
 
         it('should get token balance', async function () {
             let balance1 = await this.contract.balanceOf(account_one, {from: account_one});
-
             assert.equal(Number(balance1), 1, "Balance doesn't match");
-
         })
 
         // token uri should be complete i.e: https://s3-us-west-2.amazonaws.com/udacity-blockchain/capstone/1

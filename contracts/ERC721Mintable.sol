@@ -1,4 +1,4 @@
-pragma solidity ^0.5.0;
+pragma solidity ^0.5.16;
 
 import 'openzeppelin-solidity/contracts/utils/Address.sol';
 import 'openzeppelin-solidity/contracts/drafts/Counters.sol';
@@ -62,7 +62,7 @@ contract Pausable is Ownable {
     event Paused(address _sender);
     event Unpaused(address _sender);
 }
-contract ERC165 {
+contract ERC165 is Pausable {
     bytes4 private constant _INTERFACE_ID_ERC165 = 0x01ffc9a7;
     /*
      * 0x01ffc9a7 ===
@@ -98,7 +98,7 @@ contract ERC165 {
     }
 }
 
-contract ERC721 is Pausable, ERC165 {
+contract ERC721 is ERC165 {
 
     event Transfer(address indexed from, address indexed to, uint256 indexed tokenId, uint256 balance);
 
@@ -288,7 +288,7 @@ contract ERC721 is Pausable, ERC165 {
     }
 }
 
-contract ERC721Enumerable is ERC165, ERC721 {
+contract ERC721Enumerable is ERC721 {
     // Mapping from owner to list of owned token IDs
     mapping(address => uint256[]) private _ownedTokens;
 
