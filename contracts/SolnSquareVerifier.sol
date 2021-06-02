@@ -24,7 +24,8 @@ contract SolnSquareVerifier is ERC721Mintable {
     // TODO Create an event to emit when a solution is added
     event SolutionAdded(uint256 solutionIndex, address indexed solutionAddress);
 
-    constructor(address verifierAddress)
+    constructor(address verifierAddress, string memory name, string memory symbol)
+    ERC721Mintable(name, symbol)
     public
     {
         verifierContract = Verifier(verifierAddress);
