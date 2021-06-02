@@ -25,11 +25,6 @@ contract('TestERC721Mintable', accounts => {
             let mint2 = await this.contract.mint(this.account_two, this.token2, {from: this.account_one});
             let mint3 = await this.contract.mint(this.account_three, this.token3, {from: this.account_one});
             let mint4 = await this.contract.mint(this.account_four, this.token4, {from: this.account_one});
-            // truffleAssert.eventEmitted(mint, 'Transfer', (ev) => {
-            //     console.log("Transfer event ", Number(ev.balance));
-            //     eventEmitted = true;
-            //     return true;
-            // });
             let total = await this.contract.totalSupply({from: this.account_one});
             assert.equal(total, 4, "Total supply doesn't match with expected value");
         })

@@ -66,7 +66,7 @@ contract Pausable is Ownable {
     event Paused(address _sender);
     event Unpaused(address _sender);
 }
-contract ERC165 is Pausable {
+contract ERC165 {
     bytes4 private constant _INTERFACE_ID_ERC165 = 0x01ffc9a7;
     /*
      * 0x01ffc9a7 ===
@@ -102,7 +102,7 @@ contract ERC165 is Pausable {
     }
 }
 
-contract ERC721 is ERC165 {
+contract ERC721 is Pausable, ERC165 {
 
     event Transfer(address indexed from, address indexed to, uint256 indexed tokenId, uint256 balance);
 
@@ -292,7 +292,7 @@ contract ERC721 is ERC165 {
     }
 }
 
-contract ERC721Enumerable is ERC721 {
+contract ERC721Enumerable is ERC165, ERC721 {
     // Mapping from owner to list of owned token IDs
     mapping(address => uint256[]) private _ownedTokens;
 
@@ -491,15 +491,15 @@ contract ERC721Metadata is ERC721Enumerable, usingOraclize {
     }
 
     // TODO: create external getter functions for name, symbol, and baseTokenURI
-    function getName() external view returns (string memory) {
+    function name() external view returns (string memory) {
         return _name;
     }
 
-    function getSymbol() external view returns (string memory) {
+    function symbol() external view returns (string memory) {
         return _symbol;
     }
 
-    function getBaseTokenURI() external view returns (string memory) {
+    function baseTokenURI() external view returns (string memory) {
         return _baseTokenURI;
     }
 
@@ -509,13 +509,14 @@ contract ERC721Metadata is ERC721Enumerable, usingOraclize {
     }
 
 
+
     // TODO: Create an internal function to set the tokenURI of a specified tokenId
     // It should be the _baseTokenURI + the tokenId in string form
     // TIP #1: use strConcat() from the imported oraclizeAPI lib to set the complete token URI
     // TIP #2: you can also use uint2str() to convert a uint to a string
         // see https://github.com/oraclize/ethereum-api/blob/master/oraclizeAPI_0.5.sol for strConcat()
     // require the token exists before setting
-    function setTokenURI(uint256 tokenId) public {
+    function setTokenURI(uint256 tokenId) internal {
         require(_exists(tokenId), "Token doesn't exist");
         _tokenURIs[tokenId] = strConcat(_baseTokenURI, uint2str(tokenId));
     }

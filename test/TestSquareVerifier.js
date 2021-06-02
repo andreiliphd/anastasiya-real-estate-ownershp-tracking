@@ -5,3 +5,42 @@
 
     
 // Test verification with incorrect proof
+var Verifier = artifacts.require('../Verifier');
+const truffleAssert = require('truffle-assertions');
+let proof = require('./proof.json');
+
+
+contract('TestVerify', accounts => {
+    describe('testing proof vertification', function () {
+        beforeEach(async function () {
+            this.verifier = await Verifier.deployed();
+
+            this.account_one = accounts[0];
+            this.account_two = accounts[1];
+            this.account_three = accounts[2];
+            this.account_four = accounts[3];
+            this.account_five = accounts[4];
+            this.account_six = accounts[5];
+            this.proof = proof;
+            this.convertedProof = {
+                "A": [web3.utils.toBN(this.proof.proof.a[0]).toString(), web3.utils.toBN(this.proof.proof.a[1]).toString()],
+                "B": [[web3.utils.toBN(this.proof.proof.b[0][0]).toString(), web3.utils.toBN(this.proof.proof.b[0][1]).toString()],
+                    [web3.utils.toBN(this.proof.proof.b[1][0]).toString(), web3.utils.toBN(this.proof.proof.b[1][1]).toString()]
+                ],
+                "C": [web3.utils.toBN(this.proof.proof.c[0]).toString(), web3.utils.toBN(this.proof.proof.c[1]).toString()],
+                "inputs": [web3.utils.toBN(this.proof.inputs[0]).toString(), web3.utils.toBN(this.proof.inputs[1]).toString()]
+            };
+        });
+
+        it('proof should be correct', async function () {
+            let checkResult = await this.verifier.verifyTx(this.convertedProof.A, this.convertedProof.B, this.convertedProof.C, this.convertedProof.inputs, {from: this.account_one});
+            assert.equal(checkResult, true, "Proof check is not successful");
+        })
+
+        it('proof should not be correct', async function () {
+            let checkResult = await this.verifier.verifyTx(this.convertedProof.C, this.convertedProof.B, this.convertedProof.A, this.convertedProof.inputs, {from: this.account_one});
+            assert.equal(checkResult, false, "Proof check is successful");
+
+        })
+    });
+});
