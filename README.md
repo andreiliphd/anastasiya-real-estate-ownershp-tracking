@@ -32,6 +32,9 @@ Clone this repo:
 git clone https://github.com/andreiliphd/anastasiya-real-estate-ownershp-tracking.git
 ```
 
+## ABI
+ABI can be found under build/contracts folder from the root of repository.
+
 ---
 
 ## Usage
