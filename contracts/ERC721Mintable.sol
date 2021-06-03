@@ -96,7 +96,7 @@ contract ERC165 {
      * @dev A contract implementing SupportsInterfaceWithLookup
      * implement ERC165 itself
      */
-    constructor () internal {
+    constructor () public {
         _registerInterface(_INTERFACE_ID_ERC165);
     }
 
@@ -167,15 +167,15 @@ contract ERC721 is Pausable, ERC165 {
 
 //    @dev Approves another address to transfer the given token ID
     function approve(address to, uint256 tokenId) public {
-        
+        address tokenOwner = ownerOf(tokenId);
         // TODO require the given address to not be the owner of the tokenId
-        require(to != ownerOf(tokenId), "Address to already owns the token");
-        // TODO require the msg sender to be the owner of the contract or isApprovedForAll() to be true
-        require(msg.sender == _owner || isApprovedForAll(msg.sender, to), "Only owner of the contract or approved operator can approve");
+        require(to != tokenOwner, "Cannot approve to yourself");
+        // TODO require the msg sender to be the owner of the token or isApprovedForAll() to be true
+        require(msg.sender == tokenOwner || isApprovedForAll(tokenOwner, msg.sender), "Caller is not authorized against this token");
         // TODO add 'to' address to token approvals
         _tokenApprovals[tokenId] = to;
         // TODO emit Approval Event
-        emit Approval(ownerOf(tokenId), to, tokenId);
+        emit Approval(tokenOwner, to, tokenId);
     }
 
     function getApproved(uint256 tokenId) public view returns (address) {
