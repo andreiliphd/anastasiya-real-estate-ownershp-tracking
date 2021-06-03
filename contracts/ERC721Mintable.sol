@@ -96,7 +96,7 @@ contract ERC165 {
      * @dev A contract implementing SupportsInterfaceWithLookup
      * implement ERC165 itself
      */
-    constructor () public {
+    constructor () internal {
         _registerInterface(_INTERFACE_ID_ERC165);
     }
 
@@ -123,7 +123,7 @@ contract ERC721 is Pausable, ERC165 {
     event Approval(address indexed owner, address indexed approved, uint256 indexed tokenId);
 
     event ApprovalForAll(address indexed owner, address indexed operator, bool approved);
-    
+
     using SafeMath for uint256;
     using Address for address;
     using Counters for Counters.Counter;
@@ -165,17 +165,17 @@ contract ERC721 is Pausable, ERC165 {
         return _tokenOwner[tokenId];
     }
 
-//    @dev Approves another address to transfer the given token ID
+    //    @dev Approves another address to transfer the given token ID
     function approve(address to, uint256 tokenId) public {
-        address tokenOwner = ownerOf(tokenId);
+
         // TODO require the given address to not be the owner of the tokenId
-        require(to != tokenOwner, "Cannot approve to yourself");
-        // TODO require the msg sender to be the owner of the token or isApprovedForAll() to be true
-        require(msg.sender == tokenOwner || isApprovedForAll(tokenOwner, msg.sender), "Caller is not authorized against this token");
+        require(to != ownerOf(tokenId), "Address to already owns the token");
+        // TODO require the msg sender to be the owner of the contract or isApprovedForAll() to be true
+        require(msg.sender == _owner || isApprovedForAll(ownerOf(tokenId), msg.sender), "Only owner of the contract or approved operator can approve");
         // TODO add 'to' address to token approvals
         _tokenApprovals[tokenId] = to;
         // TODO emit Approval Event
-        emit Approval(tokenOwner, to, tokenId);
+        emit Approval(ownerOf(tokenId), to, tokenId);
     }
 
     function getApproved(uint256 tokenId) public view returns (address) {
@@ -265,7 +265,7 @@ contract ERC721 is Pausable, ERC165 {
         require(to != address(0), "Address is invalid");
         // TODO: clear approval
         _clearApproval(tokenId);
-        // TODO: update token counts & transfer ownership of the token ID 
+        // TODO: update token counts & transfer ownership of the token ID
         _ownedTokensCount[from].decrement();
         _ownedTokensCount[to].increment();
         _tokenOwner[tokenId] = to;
@@ -283,7 +283,7 @@ contract ERC721 is Pausable, ERC165 {
      * @return bool whether the call correctly returned the expected magic value
      */
     function _checkOnERC721Received(address from, address to, uint256 tokenId, bytes memory _data)
-        internal returns (bool)
+    internal returns (bool)
     {
         if (!to.isContract()) {
             return true;
@@ -523,7 +523,7 @@ contract ERC721Metadata is ERC721Enumerable, usingOraclize {
     // It should be the _baseTokenURI + the tokenId in string form
     // TIP #1: use strConcat() from the imported oraclizeAPI lib to set the complete token URI
     // TIP #2: you can also use uint2str() to convert a uint to a string
-        // see https://github.com/oraclize/ethereum-api/blob/master/oraclizeAPI_0.5.sol for strConcat()
+    // see https://github.com/oraclize/ethereum-api/blob/master/oraclizeAPI_0.5.sol for strConcat()
     // require the token exists before setting
     function setTokenURI(uint256 tokenId) internal {
         require(_exists(tokenId), "Token doesn't exist");
