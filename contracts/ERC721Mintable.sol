@@ -49,7 +49,7 @@ contract Pausable is Ownable {
 
     //  4) create 'whenNotPaused' & 'paused' modifier that throws in the appropriate situation
     modifier whenNotPaused(){
-        require(_paused == false, 'Contract is currently paused');
+        require(_paused == false, 'Contract is paused');
         _;
     }
 
@@ -169,7 +169,7 @@ contract ERC721 is Pausable, ERC165 {
     function approve(address to, uint256 tokenId) public {
 
         // TODO require the given address to not be the owner of the tokenId
-        require(to != ownerOf(tokenId), "Address to already owns the token");
+        require(to != ownerOf(tokenId), "Address already have token");
         // TODO require the msg sender to be the owner of the contract or isApprovedForAll() to be true
         require(msg.sender == _owner || isApprovedForAll(ownerOf(tokenId), msg.sender), "Only owner of the contract or approved operator can approve");
         // TODO add 'to' address to token approvals
